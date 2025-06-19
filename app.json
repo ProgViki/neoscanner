@@ -1,0 +1,50 @@
+{
+  "expo": {
+    "name": "neoscanner",
+    "slug": "neoscanner",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/images/neoscanner.png",
+    "scheme": "neoscanner",
+    "userInterfaceStyle": "automatic",
+    "newArchEnabled": true,
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/images/neoscanner.png",
+        "backgroundColor": "#ffffff"
+      },
+      "edgeToEdgeEnabled": true,
+      "package": "com.victorto.neoscanner"
+    },
+    "web": {
+      "bundler": "metro",
+      "output": "static",
+      "favicon": "./assets/images/favicon.png"
+    },
+    "plugins": [
+      "expo-router",
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/images/neoscanner.png",
+          "imageWidth": 300,
+          "resizeMode": "contain",
+          "backgroundColor": "#ffffff"
+        }
+      ]
+    ],
+    "experiments": {
+      "typedRoutes": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "6dec10b5-7da6-43c8-8369-333cc6200583"
+      }
+    },
+    "owner": "progvikii"
+  }
+}

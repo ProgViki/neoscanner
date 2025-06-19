@@ -1,0 +1,19 @@
+{
+  "extends": "expo/tsconfig.base",
+  "compilerOptions": {
+    "strict": true,
+    "baseUrl": ".",                   // Required for "paths" to work
+    "paths": {
+      "@/*": ["./*"]                  // Supports imports like '@/components/Drawer'
+    },
+    "jsx": "react-native",            // Ensures JSX works with React Native
+    "noEmit": true,                   // Prevents emitting compiled files (you don't need them with Expo)
+    "skipLibCheck": true              // Speeds up compilation and avoids library type issues
+  },
+  "include": [
+    "**/*.ts",
+    "**/*.tsx",
+    ".expo/types/**/*.ts",
+    "expo-env.d.ts"
+  ]
+}
