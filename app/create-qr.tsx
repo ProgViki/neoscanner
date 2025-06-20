@@ -8,10 +8,10 @@ import { useRouter } from 'expo-router';
 import React from 'react';
 import {
   FlatList,
-  ScrollView,
   StyleSheet,
   Text,
-  TouchableOpacity
+  TouchableOpacity,
+  View
 } from 'react-native';
 
 const QR_TYPES = [
@@ -56,7 +56,7 @@ export default function CreateQRScreen() {
 
 
   return (
-    <ScrollView style={styles.container}>
+    <View style={styles.container}>
       <Text style={styles.title}>Create QR Code</Text>
 
       <FlatList
@@ -77,7 +77,7 @@ export default function CreateQRScreen() {
           );
         }}
       />
-    </ScrollView>
+    </View>
   );
 }
 
