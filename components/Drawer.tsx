@@ -18,6 +18,7 @@ type Props = {
 export default function Drawer({ visible, drawerAnim, items, onSelect, onClose }: Props) {
   if (!visible) return null;
 
+ 
   return (
     <>
       <TouchableOpacity activeOpacity={1} onPress={onClose} style={styles.overlay} />
@@ -29,6 +30,7 @@ export default function Drawer({ visible, drawerAnim, items, onSelect, onClose }
             style={[styles.item, index === 0 && styles.primaryItem]}
           >
             <FontAwesome name={(item.icon as any)} size={20} color="#fff" />
+            
             <Text style={styles.label}>{item.label}</Text>
           </TouchableOpacity>
         ))}
@@ -70,3 +72,4 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
 });
+
