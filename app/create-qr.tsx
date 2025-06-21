@@ -17,7 +17,7 @@ import {
 const QR_TYPES = [
   { label: 'Clipboard', icon: 'content-copy', lib: 'MaterialIcons' },
   { label: 'URL', icon: 'link', lib: 'Feather' },
-  { label: 'Text', icon: 'text-box-outline', lib: 'MaterialCommunityIcons' },
+  { label: 'Text', icon: 'text-fields', lib: 'MaterialIcons' },
   { label: 'Contact', icon: 'account-circle', lib: 'MaterialIcons' },
   { label: 'Email', icon: 'email', lib: 'MaterialIcons' },
   { label: 'SMS', icon: 'message', lib: 'MaterialIcons' },
@@ -52,6 +52,7 @@ export default function CreateQRScreen() {
   params: { type: label.toLowerCase() },
 });
 };
+
 
 
 
