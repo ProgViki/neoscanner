@@ -13,11 +13,15 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
-  View
+  View,
+  Platform
 } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
+import * as FileSystem from 'expo-file-system';
 import QRCode from 'react-native-qrcode-svg';
 import { captureRef } from 'react-native-view-shot';
+import * as Sharing from 'expo-sharing';
+
 
 export default function QRTypeDetail() {
   const { type } = useLocalSearchParams<{ type: string }>();
@@ -134,14 +138,36 @@ export default function QRTypeDetail() {
     }
   };
 
-  const shareQRImage = async () => {
-    try {
-      const uri = await captureRef(qrRef, { format: 'png', quality: 1 });
-      await Share.share({ url: uri, title: 'QR Code', message: 'Scan this QR code.' });
-    } catch {
-      Alert.alert('Failed to share');
+
+
+
+const shareQRImage = async () => {
+  try {
+    const uri = await captureRef(qrRef, {
+      format: 'png',
+      quality: 1,
+    });
+
+    const fileUri = `${FileSystem.cacheDirectory}qr-code.png`;
+    await FileSystem.copyAsync({ from: uri, to: fileUri });
+
+    const isAvailable = await Sharing.isAvailableAsync();
+    if (isAvailable) {
+      await Sharing.shareAsync(fileUri, {
+        mimeType: 'image/png',
+        dialogTitle: 'Share QR Code',
+      });
+    } else {
+      Alert.alert('Sharing not available on this device.');
     }
-  };
+  } catch (error) {
+    console.error(error);
+    Alert.alert('Failed to share QR code');
+  }
+};
+
+
+
 
   if (type === 'contact' && !selectedContact) {
      return (
@@ -293,13 +319,26 @@ export default function QRTypeDetail() {
 
       {isGenerated && (
         <View style={styles.qrSection}>
-          <View ref={qrRef} collapsable={false} style={styles.qrBox}>
-            <QRCode value={qrValue} size={qrSize} />
-          </View>
+          <View
+  ref={qrRef}
+  collapsable={false}
+  style={{    width: 220, height: 220, backgroundColor: '#fff', alignItems: 'center', justifyContent: 'center', borderRadius: 16, padding: 10,
+}}
+>
+  <QRCode value={qrValue} size={140} />
+</View>
+
           <View style={styles.actions}>
-            <TouchableOpacity onPress={saveQRImage}><Text>Save</Text></TouchableOpacity>
-            <TouchableOpacity onPress={shareQRImage}><Text>Share</Text></TouchableOpacity>
-          </View>
+  <TouchableOpacity style={styles.actionButton} onPress={saveQRImage}>
+    <MaterialIcons name="save-alt" size={24} color="#2e7d32" />
+    <Text style={styles.actionText}>Save</Text>
+  </TouchableOpacity>
+  <TouchableOpacity style={styles.actionButton} onPress={shareQRImage}>
+    <MaterialIcons name="share" size={24} color="#1565c0" />
+    <Text style={styles.actionText}>Share</Text>
+  </TouchableOpacity>
+</View>
+
           <Text style={styles.qrValue}>{qrValue}</Text>
         </View>
       )}
@@ -319,12 +358,13 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     fontSize: 16,
     marginBottom: 10,
+    color: '#333',
   },
   checkIcon: { alignSelf: 'flex-end', marginBottom: 20 },
   qrSection: { marginTop: 30, alignItems: 'center' },
   qrBox: { backgroundColor: '#fff', padding: 10, borderRadius: 10, elevation: 4 },
   actions: { flexDirection: 'row', gap: 20, marginVertical: 20 },
-  qrValue: { backgroundColor: '#eee', padding: 12, borderRadius: 8, fontSize: 12 },
+  // qrValue: { backgroundColor: '#eee', padding: 12, borderRadius: 8, fontSize: 12 },
   contactItem: {
     padding: 14,
     borderBottomWidth: 1,
@@ -345,5 +385,35 @@ const styles = StyleSheet.create({
   padding: 10,
   marginVertical: 12,
   fontSize: 16,
+  textShadowColor: '#333',
 },
+actionButton: {
+    alignItems: 'center',
+  },
+  actionText: {
+    marginTop: 4,
+    fontSize: 14,
+    textShadowColor: '#333',
+  },
+  detailsBox: {
+    marginTop: 16,
+    borderWidth: 1,
+    borderColor: '#bbb',
+    borderRadius: 8,
+    padding: 10,
+    width: '100%',
+    backgroundColor: '#f9f9f9',
+  },
+  qrValue: {
+  marginTop: 20,
+  backgroundColor: '#f5f5f5',
+  padding: 12,
+  borderRadius: 8,
+  fontSize: 13,
+  color: '#333',
+  fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
+  borderWidth: 1,
+  borderColor: '#ccc',
+},
+
 });
