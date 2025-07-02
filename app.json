@@ -4,7 +4,7 @@
     "slug": "neoscanner",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/neoscanner.png",
+    "icon": "./assets/images/scanhubs.png",
     "scheme": "neoscanner",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
@@ -13,7 +13,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/neoscanner.png",
+        "foregroundImage": "./assets/images/scanhubs.png",
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
@@ -29,12 +29,19 @@
       [
         "expo-splash-screen",
         {
-          "image": "./assets/images/neoscanner.png",
+          "image": "./assets/images/scanhubs.png",
           "imageWidth": 300,
           "resizeMode": "contain",
           "backgroundColor": "#ffffff"
         }
-      ]
+      ],
+      [
+        "expo-contacts",
+        {
+          "contactsPermission": "Allow $(PRODUCT_NAME) to access your contacts."
+        }
+      ],
+      "expo-font"
     ],
     "experiments": {
       "typedRoutes": true

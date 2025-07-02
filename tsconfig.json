@@ -1,19 +1,27 @@
 {
-  "extends": "expo/tsconfig.base",
   "compilerOptions": {
+    "esModuleInterop": true,
+    "jsx": "react-jsx", // ✅ modern JSX runtime (no need to import React in every file)
+    "moduleResolution": "bundler", // ✅ compatible with Expo/Metro
     "strict": true,
-    "baseUrl": ".",                   // Required for "paths" to work
+    "allowSyntheticDefaultImports": true,
+    "skipLibCheck": true,
+    "typeRoots": ["./node_modules/@types", "./types"],
+    "baseUrl": "./",
     "paths": {
-      "@/*": ["./*"]                  // Supports imports like '@/components/Drawer'
-    },
-    "jsx": "react-native",            // Ensures JSX works with React Native
-    "noEmit": true,                   // Prevents emitting compiled files (you don't need them with Expo)
-    "skipLibCheck": true              // Speeds up compilation and avoids library type issues
+      "@/*": ["./*"]
+    }
   },
   "include": [
     "**/*.ts",
     "**/*.tsx",
     ".expo/types/**/*.ts",
     "expo-env.d.ts"
+  ],
+  "extends": "expo/tsconfig.base",
+  "exclude": [
+    "node_modules",
+    "babel.config.js",
+    "metro.config.js"
   ]
 }
