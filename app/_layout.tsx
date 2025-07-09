@@ -10,8 +10,9 @@ export default function RootLayout() {
       <Stack.Screen name="create-qr"  />
       <Stack.Screen name="favorites"  />
       <Stack.Screen name="history"  />
-
       {/* <Drawer /> */}
     </Stack>
   );
 }
+
+

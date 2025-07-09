@@ -327,16 +327,15 @@ const shareQRImage = async () => {
 >
   <QRCode value={qrValue} size={140} />
 </View>
-
-          <View style={styles.actions}>
-  <TouchableOpacity style={styles.actionButton} onPress={saveQRImage}>
-    <MaterialIcons name="save-alt" size={24} color="#2e7d32" />
-    <Text style={styles.actionText}>Save</Text>
-  </TouchableOpacity>
-  <TouchableOpacity style={styles.actionButton} onPress={shareQRImage}>
-    <MaterialIcons name="share" size={24} color="#1565c0" />
-    <Text style={styles.actionText}>Share</Text>
-  </TouchableOpacity>
+    <View style={styles.actions}>
+      <TouchableOpacity style={styles.actionButton} onPress={saveQRImage}>
+        <MaterialIcons name="save-alt" size={24} color="#2e7d32" />
+        <Text style={styles.actionText}>Save</Text>
+    </TouchableOpacity>
+    <TouchableOpacity style={styles.actionButton} onPress={shareQRImage}>
+        <MaterialIcons name="share" size={24} color="#1565c0" />
+        <Text style={styles.actionText}>Share</Text>
+    </TouchableOpacity>
 </View>
 
           <Text style={styles.qrValue}>{qrValue}</Text>

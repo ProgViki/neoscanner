@@ -1,3 +1,8 @@
+// firebaseConfig.ts import (ensure you already have this configured)
+import { db } from '@/utils/firebaseConfig';
+import { addDoc, collection, Timestamp } from 'firebase/firestore';
+
+// ...rest of your existing imports
 import Drawer from '@/components/Drawer';
 import ResultCard from '@/components/Resultcard';
 import ScannerFrame from '@/components/ScannerFrame';
@@ -42,21 +47,15 @@ export default function QRScannerScreen() {
   const router = useRouter();
   const [permission, requestPermission] = CameraAPI.useCameraPermissions();
 
-  // Set up pan responder for pinch-to-zoom gesture
-   const panResponder = useRef(
+  const panResponder = useRef(
     PanResponder.create({
-      onStartShouldSetPanResponder: (_, gestureState) => {
-        return gestureState.numberActiveTouches === 2;
-      },
-      onMoveShouldSetPanResponder: (_, gestureState) => {
-        return gestureState.numberActiveTouches === 2;
-      },
+      onStartShouldSetPanResponder: (_, gestureState) => gestureState.numberActiveTouches === 2,
+      onMoveShouldSetPanResponder: (_, gestureState) => gestureState.numberActiveTouches === 2,
       onPanResponderMove: (_, gestureState) => {
         if (gestureState.numberActiveTouches === 2) {
           const dx = gestureState.dx;
           const dy = gestureState.dy;
           const distance = Math.sqrt(dx * dx + dy * dy);
-          
           if (lastZoom === 0) {
             setLastZoom(zoom);
           } else {
@@ -68,9 +67,7 @@ export default function QRScannerScreen() {
           }
         }
       },
-      onPanResponderRelease: () => {
-        setLastZoom(0);
-      },
+      onPanResponderRelease: () => setLastZoom(0),
     })
   ).current;
 
@@ -82,25 +79,32 @@ export default function QRScannerScreen() {
     }
   }, [permission]);
 
-  const handleBarcodeScanned = ({ data, type }: { data: string; type: string }) => {
+  const handleBarcodeScanned = async ({ data, type }: { data: string; type: string }) => {
     if (scanned) return;
     setScanned(true);
-    setScannedData({ data, type, timestamp: Date.now() });
+    const timestamp = Date.now();
+    setScannedData({ data, type, timestamp });
+
+    try {
+      await addDoc(collection(db, 'qrScanHistory'), {
+        value: data,
+        type,
+        scannedAt: Timestamp.fromMillis(timestamp),
+        favorite: false,
+        imageUrl: '',
+      });
+    } catch (err) {
+      console.error('Error saving scanned QR to Firestore:', err);
+    }
   };
 
   const flipCamera = () => {
     setCameraType((prev) => (prev === 'back' ? 'front' : 'back'));
-    // Reset zoom when flipping camera
     setZoom(0);
   };
 
-  const zoomIn = () => {
-    setZoom((prevZoom) => Math.min(prevZoom + 0.1, MAX_ZOOM));
-  };
-
-  const zoomOut = () => {
-    setZoom((prevZoom) => Math.max(prevZoom - 0.1, MIN_ZOOM));
-  };
+  const zoomIn = () => setZoom((prevZoom) => Math.min(prevZoom + 0.1, MAX_ZOOM));
+  const zoomOut = () => setZoom((prevZoom) => Math.max(prevZoom - 0.1, MIN_ZOOM));
 
   const toggleDrawer = () => {
     if (drawerVisible) {
@@ -119,8 +123,7 @@ export default function QRScannerScreen() {
     }
   };
 
-  // ... rest of your existing functions (pickImageFromGallery, handleDrawerAction, etc.)
-   const pickImageFromGallery = async () => {
+  const pickImageFromGallery = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: 'images',
       allowsEditing: true,
@@ -130,22 +133,22 @@ export default function QRScannerScreen() {
     if (!result.canceled && result.assets?.[0]?.uri) {
       try {
         const scannedResults = await CameraAPI.scanFromURLAsync(result.assets[0].uri, [
-          'qr',
-          'ean13',
-          'ean8',
-          'code128',
-          'upc_a',
-          'upc_e',
+          'qr', 'ean13', 'ean8', 'code128', 'upc_a', 'upc_e',
         ]);
 
         if (scannedResults.length > 0) {
           const { data, type } = scannedResults[0];
-          setScannedData({
-            data,
-            type: typeof type === 'string' ? type : 'unknown',
-            timestamp: Date.now(),
-          });
+          const timestamp = Date.now();
+          setScannedData({ data, type, timestamp });
           setScanned(true);
+
+          await addDoc(collection(db, 'qrScanHistory'), {
+            value: data,
+            type,
+            scannedAt: Timestamp.fromMillis(timestamp),
+            favorite: false,
+            imageUrl: result.assets[0].uri,
+          });
         } else {
           Alert.alert('No QR code found', 'We could not detect any barcode in the selected image.');
         }
@@ -157,39 +160,29 @@ export default function QRScannerScreen() {
   };
 
   const drawerItems = [
-  { icon: 'qrcode', label: 'Scan' },
-  { icon: 'image', label: 'Scan Image' },
-  { icon: 'edit', label: 'Create QR' },
-  { icon: 'star', label: 'Favorites' },
-  { icon: 'history', label: 'History' },
-];
+    { icon: 'qrcode', label: 'Scan' },
+    { icon: 'image', label: 'Scan Image' },
+    { icon: 'edit', label: 'Create QR' },
+    { icon: 'star', label: 'Favorites' },
+    { icon: 'history', label: 'History' },
+  ];
 
   const handleDrawerAction = (label: string) => {
     toggleDrawer();
     switch (label) {
-      case 'Scan':
-        break;
-      case 'Scan Image':
-        pickImageFromGallery();
-        break;
-      case 'Create QR':
-        router.push('/create-qr');
-        break;
-      case 'Favorites':
-        router.push('/favorites');
-        break;
-      case 'History':
-        router.push('/history');
-        break;
+      case 'Scan': break;
+      case 'Scan Image': pickImageFromGallery(); break;
+      case 'Create QR': router.push('/create-qr'); break;
+      case 'Favorites': router.push('/favorites'); break;
+      case 'History': router.push('/history'); break;
     }
   };
-  
+
   if (hasPermission === null) return <Text>Requesting camera permission...</Text>;
   if (hasPermission === false) return <Text>No camera access</Text>;
 
   return (
-     <View style={{ flex: 1 }}>
-      {/* CameraView with pan responder only on this element */}
+    <View style={{ flex: 1 }}>
       <CameraView
         ref={cameraRef}
         style={StyleSheet.absoluteFill}
@@ -199,10 +192,9 @@ export default function QRScannerScreen() {
         barcodeScannerSettings={{
           barcodeTypes: ['qr', 'ean13', 'ean8', 'code128', 'upc_a', 'upc_e'],
         }}
-        {...panResponder.panHandlers} // Moved pan responder here
+        {...panResponder.panHandlers}
       />
 
-      {/* UI Overlay - no pan responder here so buttons work */}
       {!scannedData && (
         <View style={StyleSheet.absoluteFill} pointerEvents="box-none">
           <View style={styles.topBar} pointerEvents="box-none">
@@ -218,9 +210,7 @@ export default function QRScannerScreen() {
               </TouchableOpacity>
             </View>
           </View>
-          <ScannerFrame  />
-
-          {/* Zoom Controls */}
+          <ScannerFrame />
           <View style={styles.zoomControls} pointerEvents="box-none">
             <TouchableOpacity onPress={zoomOut} style={styles.zoomButton}>
               <MaterialIcons name="zoom-out" size={24} color="white" />
@@ -233,10 +223,8 @@ export default function QRScannerScreen() {
             </TouchableOpacity>
           </View>
         </View>
-      
       )}
 
-      {/* Result Card */}
       {scannedData && (
         <ResultCard
           data={scannedData.data}
@@ -249,7 +237,6 @@ export default function QRScannerScreen() {
         />
       )}
 
-      {/* Drawer */}
       <Drawer
         visible={drawerVisible}
         drawerAnim={drawerAnim}

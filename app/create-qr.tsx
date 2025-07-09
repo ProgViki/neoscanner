@@ -14,6 +14,7 @@ import {
   View
 } from 'react-native';
 
+
 const QR_TYPES = [
   { label: 'Clipboard', icon: 'content-copy', lib: 'MaterialIcons' },
   { label: 'URL', icon: 'link', lib: 'Feather' },
@@ -52,8 +53,6 @@ export default function CreateQRScreen() {
   params: { type: label.toLowerCase() },
 });
 };
-
-
 
 
   return (
