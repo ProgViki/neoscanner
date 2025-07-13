@@ -163,8 +163,10 @@ export default function QRScannerScreen() {
     { icon: 'qrcode', label: 'Scan' },
     { icon: 'image', label: 'Scan Image' },
     { icon: 'edit', label: 'Create QR' },
+    { icon: 'barcode', label: 'Create Barcode' },
     { icon: 'star', label: 'Favorites' },
     { icon: 'history', label: 'History' },
+    
   ];
 
   const handleDrawerAction = (label: string) => {
@@ -173,6 +175,7 @@ export default function QRScannerScreen() {
       case 'Scan': break;
       case 'Scan Image': pickImageFromGallery(); break;
       case 'Create QR': router.push('/create-qr'); break;
+      case 'Create Barcode': router.push('/barcode'); break;
       case 'Favorites': router.push('/favorites'); break;
       case 'History': router.push('/history'); break;
     }
