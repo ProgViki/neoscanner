@@ -175,7 +175,7 @@ export default function QRScannerScreen() {
       case 'Scan': break;
       case 'Scan Image': pickImageFromGallery(); break;
       case 'Create QR': router.push('/create-qr'); break;
-      case 'Create Barcode': router.push('/barcode'); break;
+      case 'Create Barcode': router.push('/barcode' as any); break;
       case 'Favorites': router.push('/favorites'); break;
       case 'History': router.push('/history'); break;
     }
