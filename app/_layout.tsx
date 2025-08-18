@@ -7,9 +7,9 @@ export default function RootLayout() {
   return (
     <Stack>
       <Stack.Screen name="index" options={{ headerShown: false }} />
-      <Stack.Screen name="create-qr"  />
-      <Stack.Screen name="favorites"  />
-      <Stack.Screen name="history"  />
+      <Stack.Screen name="create-qr" options={{ headerShown: true, headerTitle: "Create QR" }}   />
+      <Stack.Screen name="favorites" options={{ headerShown: true, headerTitle: "Favorites" }}  />
+      <Stack.Screen name="history"  options={{ headerShown: true, headerTitle: "History" }}/>
       {/* <Drawer /> */}
     </Stack>
   );
