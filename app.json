@@ -2,9 +2,9 @@
   "expo": {
     "name": "neoscanner",
     "slug": "neoscanner",
-    "version": "1.0.0",
+    "version": "2.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/scanhubs.png",
+    "icon": "./assets/images/neoscanners.png",
     "scheme": "neoscanner",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
@@ -13,11 +13,15 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/scanhubs.png",
+        "foregroundImage": "./assets/images/neoscanners.png",
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
-      "package": "com.victorto.neoscanner"
+      "package": "com.victorto.neoscanner",
+      "permissions": [
+        "android.permission.READ_CONTACTS",
+        "android.permission.WRITE_CONTACTS"
+      ]
     },
     "web": {
       "bundler": "metro",
@@ -29,7 +33,7 @@
       [
         "expo-splash-screen",
         {
-          "image": "./assets/images/scanhubs.png",
+          "image": "./assets/images/neoscanners.png",
           "imageWidth": 300,
           "resizeMode": "contain",
           "backgroundColor": "#ffffff"
@@ -49,9 +53,8 @@
     "extra": {
       "router": {},
       "eas": {
-        "projectId": "6dec10b5-7da6-43c8-8369-333cc6200583"
+        "projectId": "13ea97c0-c8c0-4ee7-8abb-ec1d7c2d1671"
       }
-    },
-    "owner": "progvikii"
+    }
   }
 }

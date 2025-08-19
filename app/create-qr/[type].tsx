@@ -2,29 +2,28 @@ import { MaterialIcons } from '@expo/vector-icons';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import * as Clipboard from 'expo-clipboard';
 import * as Contacts from 'expo-contacts';
+import * as FileSystem from 'expo-file-system';
 import * as MediaLibrary from 'expo-media-library';
-import { useLocalSearchParams } from 'expo-router';
+import { Stack, useLocalSearchParams } from 'expo-router';
+import * as Sharing from 'expo-sharing';
 import React, { useEffect, useRef, useState } from 'react';
 import {
   Alert,
   FlatList,
-  Share,
+  Platform,
   StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
-  View,
-  Platform
+  View
 } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
-import * as FileSystem from 'expo-file-system';
 import QRCode from 'react-native-qrcode-svg';
 import { captureRef } from 'react-native-view-shot';
-import * as Sharing from 'expo-sharing';
 
 
 export default function QRTypeDetail() {
-  const { type } = useLocalSearchParams<{ type: string }>();
+  // const { type } = useLocalSearchParams<{ type: string }>();
   const [form, setForm] = useState<any>({});
   const [qrValue, setQrValue] = useState('');
   const [isGenerated, setIsGenerated] = useState(false);
@@ -42,6 +41,9 @@ export default function QRTypeDetail() {
   const [showEnd, setShowEnd] = useState(false);
   const [wifiSecurity, setWifiSecurity] = useState('WPA');
   const [openWifi, setOpenWifi] = useState(false);
+
+  const { type, name } = useLocalSearchParams<{ type: string; name?: string }>();
+
 
   useEffect(() => {
     if (type === 'contact') {
@@ -79,6 +81,14 @@ export default function QRTypeDetail() {
       setIsGenerated(true);
     }
   }, [selectedContact]);
+
+      const cancelGenerate = () => {
+      setForm({});
+      setQrValue('');
+      setIsGenerated(false);
+      setSelectedContact(null); // reset contact if in contact mode
+    };
+
 
   const generateQR = async () => {
     let value = '';
@@ -171,7 +181,13 @@ const shareQRImage = async () => {
 
   if (type === 'contact' && !selectedContact) {
      return (
-       <View style={styles.container}>
+    <>
+    <Stack.Screen
+        options={{
+          title: name ? `${name} QR Code` : `${type?.toUpperCase()} QR Code`,
+        }}
+      />
+  <View style={styles.container}>
    <Text style={styles.title}>Select Contact</Text>
  
    <TextInput
@@ -197,20 +213,30 @@ const shareQRImage = async () => {
      )}
    />
  </View>
- 
+ </>
      );
    }
  
 
   return (
-
+    <>
+    <Stack.Screen
+        options={{
+          title: name ? `${name} QR Code` : `${type?.toUpperCase()} QR Code`,
+        }}
+      />
     <View style={styles.container} >
       <View style={styles.header}>
-      <Text style={styles.title}>{type?.toUpperCase()} QR Code</Text>
-        <TouchableOpacity onPress={generateQR} style={styles.checkIcon}>
-          <MaterialIcons name="check-circle" size={28} color="green" />
-        </TouchableOpacity>
-      </View>
+  <Text style={styles.title}>Enter your {type?.toUpperCase()} below</Text>
+  <View style={styles.iconRow}>
+    <TouchableOpacity onPress={generateQR} style={styles.iconBtn}>
+      <MaterialIcons name="check-circle" size={28} color="green" />
+    </TouchableOpacity>
+    <TouchableOpacity onPress={cancelGenerate} style={styles.iconBtn}>
+      <MaterialIcons name="cancel" size={28} color="red" />
+    </TouchableOpacity>
+  </View>
+</View>
 
       {/* Custom Inputs by Type */}
       {type === 'text' && (
@@ -336,28 +362,28 @@ const shareQRImage = async () => {
         <MaterialIcons name="share" size={24} color="#1565c0" />
         <Text style={styles.actionText}>Share</Text>
     </TouchableOpacity>
-</View>
+    </View>
 
           <Text style={styles.qrValue}>{qrValue}</Text>
         </View>
       )}
     </View>
-   
+   </>
   );
 }
 
 const styles = StyleSheet.create({
   container: { padding: 20, flex: 1 },
   header: { alignItems: 'stretch', justifyContent: 'space-around'},
-  title: { fontSize: 24, fontWeight: 'bold' },
+  title: { fontSize: 18, fontWeight: 500, },
   input: {
     borderWidth: 1,
-    borderColor: '#aaa',
+    borderColor: '#0E4E93',
     padding: 12,
     borderRadius: 8,
     fontSize: 16,
     marginBottom: 10,
-    color: '#333',
+    color: '#000000',
   },
   checkIcon: { alignSelf: 'flex-end', marginBottom: 20 },
   qrSection: { marginTop: 30, alignItems: 'center' },
@@ -379,7 +405,7 @@ const styles = StyleSheet.create({
   },
   searchInput: {
   borderWidth: 1,
-  borderColor: '#aaa',
+  borderColor: '#0E4E93',
   borderRadius: 8,
   padding: 10,
   marginVertical: 12,
@@ -414,5 +440,16 @@ actionButton: {
   borderWidth: 1,
   borderColor: '#ccc',
 },
+iconRow: {
+  flexDirection: 'row',
+  alignItems: 'center',
+  justifyContent: 'flex-end',
+  marginBottom: 20,
+  gap: 10,
+},
+iconBtn: {
+  marginLeft: 10,
+},
+
 
 });

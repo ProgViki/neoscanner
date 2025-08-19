@@ -31,6 +31,7 @@ const QR_TYPES = [
 
 export default function CreateQRScreen() {
   const router = useRouter();
+  
 
   const getIconComponent = (lib: string) => {
     switch (lib) {
@@ -49,15 +50,20 @@ export default function CreateQRScreen() {
 
   const handleSelectType = (label: string) => {
   router.push({
-  pathname: '/create-qr/[type]',
-  params: { type: label.toLowerCase() },
-});
+    pathname: '/create-qr/[type]',
+    params: { 
+      type: label.toLowerCase(),
+      name: label   // 👈 pass the original label
+    },
+  });
 };
+
 
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Create QR Code</Text>
+      {/* <View style={styles.box}> */}
+        <Text style={styles.title}>Select the QR-Code Type to create</Text>
 
       <FlatList
         data={QR_TYPES}
@@ -71,27 +77,29 @@ export default function CreateQRScreen() {
               style={styles.gridItem}
               onPress={() => handleSelectType(item.label)}
             >
-              <Icon name={item.icon as any} size={28} color="#333" />
+              <Icon name={item.icon as any} size={28} color="#0E4E93" />
               <Text style={styles.label}>{item.label}</Text>
             </TouchableOpacity>
           );
         }}
       />
+      {/* </View> */}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: { padding: 16, backgroundColor: '#fff', flex: 1 },
-  title: { fontSize: 24, fontWeight: 'bold', marginBottom: 10 },
+  title: { fontSize: 14, fontWeight: 'bold', marginBottom: 10 },
+  // box: { borderWidth: 1, borderColor: '#0E4E93', alignItems: 'center', justifyContent: 'center' },
   gridItem: {
     flex: 1,
     margin: 8,
     padding: 16,
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: '#ccc',
+    borderColor: '#0E4E93',
     borderRadius: 10,
   },
-  label: { marginTop: 6, fontSize: 14 },
+  label: { marginTop: 6, fontSize: 14, color: '#0E4E93', },
 });
